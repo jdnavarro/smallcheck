@@ -35,5 +35,5 @@ Library
         Test.SmallCheck.Series
     Other-modules:
         Test.SmallCheck.Property
-        Test.SmallCheck.Series.Types
+        Test.SmallCheck.SeriesMonad
         Test.SmallCheck.Property.Result

@@ -35,7 +35,7 @@ module Test.SmallCheck.Property (
   ) where
 
 import Test.SmallCheck.Series
-import Test.SmallCheck.Series.Types
+import Test.SmallCheck.SeriesMonad
 import Test.SmallCheck.Property.Result
 import Control.Monad
 import Control.Monad.Logic
@@ -111,16 +111,12 @@ runProperty depth hook prop =
   flip runReader (Env Forall hook) $
   unProperty prop
 
-atomicProperty
-  :: Monad m
-  => Series m PropertySuccess
-  -> Series m PropertyFailure
-  -> PropertySeries m
+atomicProperty :: Series m PropertySuccess -> Series m PropertyFailure -> PropertySeries m
 atomicProperty s f =
   let prop = PropertySeries s f (pure (Property $ pure prop, []))
   in prop
 
-makeAtomic :: Monad m => Property m -> Property m
+makeAtomic :: Property m -> Property m
 makeAtomic (Property prop) =
   Property $ flip fmap prop $ \ps ->
     atomicProperty (searchExamples ps) (searchCounterExamples ps)
@@ -275,7 +271,7 @@ atMost n m
 ------------------------------
 -- {{{
 
-quantify :: Monad m => Quantification -> Property m -> Property m
+quantify :: Quantification -> Property m -> Property m
 quantify q (Property a) =
   makeAtomic $ Property $ local (\env -> env { quantification = q }) a
 
